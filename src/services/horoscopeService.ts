@@ -1,4 +1,3 @@
-import axios from 'axios';
 
 export interface HoroscopeData {
   description: string;
@@ -135,34 +134,19 @@ const mockHoroscopeData: Record<string, HoroscopeData> = {
   },
 };
 
-// Aztro API service
-const AZTRO_API_URL = 'https://aztro.sameerkumar.website/';
-
 export const fetchHoroscope = async (sign: string): Promise<HoroscopeData> => {
-  try {
-    // Try to fetch from the actual API
-    const response = await axios.post(`${AZTRO_API_URL}?sign=${sign}&day=today`);
-    
-    if (response.data) {
-      return {
-        description: response.data.description || '',
-        compatibility: response.data.compatibility || '',
-        mood: response.data.mood || '',
-        color: response.data.color || '',
-        lucky_number: response.data.lucky_number || '',
-        lucky_time: response.data.lucky_time || '',
-        date_range: response.data.date_range || '',
-        current_date: response.data.current_date || new Date().toDateString(),
-      };
-    }
-  } catch (error) {
-    console.warn('Failed to fetch from Aztro API, using mock data:', error);
-  }
-
-  // Fallback to mock data
-  const mockData = mockHoroscopeData[sign.toLowerCase()];
+  // Simulate API delay for better UX
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  // Use mock data
+  const normalizedSign = sign.toLowerCase();
+  
+  const mockData = mockHoroscopeData[normalizedSign];
   if (mockData) {
-    return mockData;
+    return {
+      ...mockData,
+      current_date: new Date().toDateString(), // Always use current date
+    };
   }
 
   // Default fallback

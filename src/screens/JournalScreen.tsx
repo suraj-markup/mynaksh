@@ -20,12 +20,19 @@ export const JournalScreen: React.FC = () => {
 
   // Convert entries object to sorted array
   const entriesArray: JournalEntryDisplay[] = Object.entries(journalEntries)
-    .map(([date, entry]: [string, any]) => ({
-      date,
-      text: entry.text || entry, // Handle both old string format and new object format
-      title: entry.title || 'Journal Entry',
-      preview: (entry.text || entry).length > 100 ? (entry.text || entry).substring(0, 100) + '...' : (entry.text || entry),
-    }))
+    .map(([date, entry]: [string, any]) => {
+      // Handle both old string format and new object format
+      const text = typeof entry === 'string' ? entry : (entry?.text || '');
+      const title = typeof entry === 'string' ? 'Journal Entry' : (entry?.title || 'Journal Entry');
+      
+      return {
+        date,
+        text,
+        title,
+        preview: text.length > 100 ? text.substring(0, 100) + '...' : text,
+      };
+    })
+    .filter(entry => entry.text.trim() !== '') // Filter out empty entries
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()); // Latest first
 
   const formatEntryDate = (dateString: string) => {

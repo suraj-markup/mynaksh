@@ -1,9 +1,11 @@
+import { format } from 'date-fns';
+import { router } from 'expo-router';
 import React, { useEffect } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { FloatingActionButton } from '@/src/components/FloatingActionButton';
 import { HoroscopeCard } from '@/src/components/HoroscopeCard';
-import { JournalButton } from '@/src/components/JournalButton';
 import { ZodiacSelector } from '@/src/components/ZodiacSelector';
 import { fetchHoroscopeData } from '../store/horoscopeSlice';
 import { selectSelectedSign } from '../store/journalSlice';
@@ -43,10 +45,13 @@ export const HomeScreen: React.FC = () => {
             error={horoscopeState.error}
             selectedSign={selectedSign}
           />
-          
-          <JournalButton />
         </View>
       </ScrollView>
+      
+      <FloatingActionButton onPress={() => {
+        const today = format(new Date(), 'yyyy-MM-dd');
+        router.push(`/journal-entry?date=${today}&isNew=true`);
+      }} />
     </View>
   );
 };

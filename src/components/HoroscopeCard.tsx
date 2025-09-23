@@ -69,6 +69,18 @@ export const HoroscopeCard: React.FC<HoroscopeCardProps> = ({
           <Text style={styles.detailLabel}>Lucky Number:</Text>
           <Text style={styles.detailValue}>{horoscopeData.lucky_number}</Text>
         </View>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Lucky Time:</Text>
+          <Text style={styles.detailValue}>{horoscopeData.lucky_time}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Compatibility:</Text>
+          <Text style={styles.detailValue}>{horoscopeData.compatibility}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Date Range:</Text>
+          <Text style={styles.detailValue}>{horoscopeData.date_range}</Text>
+        </View>
       </View>
     </CustomCard>
   );

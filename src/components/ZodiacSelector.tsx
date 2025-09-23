@@ -28,8 +28,7 @@ export const ZodiacSelector: React.FC = () => {
               key={sign.value}
               label={`${sign.symbol} ${sign.label}`}
               value={sign.value}
-              color={theme.colors.PRIMARY_TEXT}
-              style={styles.pickerItemText}
+              color='black'
             />
           ))}
         </Picker>
@@ -59,10 +58,5 @@ const styles = StyleSheet.create({
   pickerItem: {
     color: theme.colors.PRIMARY_TEXT,
     backgroundColor: theme.colors.CARD_BACKGROUND,
-  },
-  pickerItemText: {
-    color: 'black',
-    fontSize: theme.fontSize.md,
-    fontWeight: '500',
   },
 });

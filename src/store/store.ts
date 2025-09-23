@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import horoscopeReducer from './horoscopeSlice';
 import journalReducer from './journalSlice';
+import { persistenceMiddleware } from './persistenceMiddleware';
 
 export const store = configureStore({
   reducer: {
@@ -12,7 +13,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: ['persist/PERSIST'],
       },
-    }),
+    }).concat(persistenceMiddleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
