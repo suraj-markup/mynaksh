@@ -18,6 +18,7 @@ export const JournalEntryScreen: React.FC = () => {
   
   const existingEntry = useSelector((state: any) => selectJournalEntry(state, entryDate));
   const [text, setText] = useState(isNew ? '' : existingEntry);
+  const [title, setTitle] = useState('Journal Entry');
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(isNew);
 
   useEffect(() => {
@@ -29,6 +30,11 @@ export const JournalEntryScreen: React.FC = () => {
   const handleTextChange = (newText: string) => {
     setText(newText);
     setHasUnsavedChanges(newText !== existingEntry);
+  };
+
+  const handleTitleChange = (newTitle: string) => {
+    setTitle(newTitle);
+    setHasUnsavedChanges(true);
   };
 
   const handleSave = () => {
@@ -56,7 +62,13 @@ export const JournalEntryScreen: React.FC = () => {
   return (
     <View style={globalStyles.container}>
       <View style={styles.headerContainer}>
-        <DateHeader date={entryDate} onBack={handleBack} />
+        <DateHeader 
+          date={entryDate} 
+          onBack={handleBack}
+          title={title}
+          onTitleChange={handleTitleChange}
+          editable={true}
+        />
       </View>
       
       <View style={styles.inputContainer}>

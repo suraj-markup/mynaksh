@@ -8,9 +8,10 @@ import CustomCard from '@/src/components/CustomCard';
 import { FloatingActionButton } from '@/src/components/FloatingActionButton';
 import { globalStyles, theme } from '../utils/theme';
 
-interface JournalEntry {
+interface JournalEntryDisplay {
   date: string;
   text: string;
+  title: string;
   preview: string;
 }
 
