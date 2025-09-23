@@ -1,27 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import { router, useLocalSearchParams } from 'expo-router';
 import { format } from 'date-fns';
+import { router, useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { Alert, StyleSheet, View } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { globalStyles, theme } from '../utils/theme';
-import { selectJournalEntry, updateJournalEntry } from '../store/journalSlice';
 import { DateHeader } from '../components/DateHeader';
 import { JournalInput } from '../components/JournalInput';
 import { SaveButton } from '../components/SaveButton';
+import { selectJournalEntry, updateJournalEntry } from '../store/journalSlice';
+import { globalStyles, theme } from '../utils/theme';
 
 export const JournalEntryScreen: React.FC = () => {
   const dispatch = useDispatch();
   const params = useLocalSearchParams();
   const entryDate = params.date as string || format(new Date(), 'yyyy-MM-dd');
+  const isNew = params.isNew === 'true';
   
   const existingEntry = useSelector((state: any) => selectJournalEntry(state, entryDate));
-  const [text, setText] = useState(existingEntry);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [text, setText] = useState(isNew ? '' : existingEntry);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(isNew);
 
   useEffect(() => {
-    setText(existingEntry);
-  }, [existingEntry]);
+    if (!isNew) {
+      setText(existingEntry);
+    }
+  }, [existingEntry, isNew]);
 
   const handleTextChange = (newText: string) => {
     setText(newText);
@@ -52,35 +55,41 @@ export const JournalEntryScreen: React.FC = () => {
 
   return (
     <View style={globalStyles.container}>
-      <View style={styles.container}>
+      <View style={styles.headerContainer}>
         <DateHeader date={entryDate} onBack={handleBack} />
-        
-        <View style={styles.contentContainer}>
-          <JournalInput 
-            value={text}
-            onChangeText={handleTextChange}
-            placeholder="Write about your day, thoughts, and reflections..."
-          />
-          
-          <SaveButton 
-            onPress={handleSave}
-            disabled={!hasUnsavedChanges}
-            title={hasUnsavedChanges ? 'Save Changes' : 'Saved'}
-          />
-        </View>
+      </View>
+      
+      <View style={styles.inputContainer}>
+        <JournalInput 
+          value={text}
+          onChangeText={handleTextChange}
+          placeholder="Write about your day, thoughts, and reflections..."
+        />
+      </View>
+      
+      <View style={styles.buttonContainer}>
+        <SaveButton 
+          onPress={handleSave}
+          disabled={!hasUnsavedChanges}
+          title={hasUnsavedChanges ? 'Save Changes' : 'Saved'}
+        />
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  headerContainer: {
     paddingHorizontal: theme.spacing.md,
     paddingTop: theme.spacing.xl,
   },
-  contentContainer: {
+  inputContainer: {
     flex: 1,
-    gap: theme.spacing.lg,
+    paddingHorizontal: theme.spacing.md,
+    paddingTop: theme.spacing.md,
+  },
+  buttonContainer: {
+    paddingHorizontal: theme.spacing.md,
+    paddingBottom: theme.spacing.lg,
   },
 });

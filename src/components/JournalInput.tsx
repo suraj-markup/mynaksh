@@ -1,39 +1,28 @@
-import { format } from 'date-fns';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { StyleSheet, TextInput } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
 
-import { selectTodayJournalEntry, updateJournalEntry } from '../store/journalSlice';
 import { globalStyles, theme } from '../utils/theme';
 import CustomCard from './CustomCard';
 
-export const JournalInput: React.FC = () => {
-  const dispatch = useDispatch();
-  const savedEntry = useSelector(selectTodayJournalEntry);
-  const [text, setText] = useState(savedEntry);
+interface JournalInputProps {
+  value: string;
+  onChangeText: (text: string) => void;
+  placeholder?: string;
+}
 
-  useEffect(() => {
-    setText(savedEntry);
-  }, [savedEntry]);
-
-  const handleTextChange = (newText: string) => {
-    setText(newText);
-  };
-
-  const handleBlur = () => {
-    // Auto-save on blur
-    const today = format(new Date(), 'yyyy-MM-dd');
-    dispatch(updateJournalEntry({ date: today, text }));
-  };
+export const JournalInput: React.FC<JournalInputProps> = ({ 
+  value, 
+  onChangeText, 
+  placeholder = "Write about your day, thoughts, and reflections..." 
+}) => {
 
   return (
     <CustomCard style={styles.container}>
       <TextInput
         style={[globalStyles.input, styles.textInput]}
-        value={text}
-        onChangeText={handleTextChange}
-        onBlur={handleBlur}
-        placeholder="Write about your day, thoughts, and reflections..."
+        value={value}
+        onChangeText={onChangeText}
+        placeholder={placeholder}
         placeholderTextColor={theme.colors.SECONDARY_TEXT}
         multiline
         textAlignVertical="top"
@@ -49,8 +38,9 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    minHeight: 300,
+    minHeight: 400,
     fontSize: theme.fontSize.md,
     lineHeight: 24,
+    padding: theme.spacing.md,
   },
 });
