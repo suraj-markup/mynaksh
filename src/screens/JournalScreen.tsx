@@ -19,17 +19,20 @@ export const JournalScreen: React.FC = () => {
   const journalEntries = useSelector((state: any) => state.journal.entries);
 
   // Convert entries object to sorted array
-  const entriesArray: JournalEntry[] = Object.entries(journalEntries)
-    .map(([date, text]: [string, string]) => ({
+  const entriesArray: JournalEntryDisplay[] = Object.entries(journalEntries)
+    .map(([date, entry]: [string, any]) => ({
       date,
-      text,
-      preview: text.length > 100 ? text.substring(0, 100) + '...' : text,
+      text: entry.text || entry, // Handle both old string format and new object format
+      title: entry.title || 'Journal Entry',
+      preview: (entry.text || entry).length > 100 ? (entry.text || entry).substring(0, 100) + '...' : (entry.text || entry),
     }))
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()); // Latest first
 
   const formatEntryDate = (dateString: string) => {
     try {
-      const date = parseISO(dateString);
+      // Extract just the date part if it contains timestamp
+      const dateOnly = dateString.split('-').slice(0, 3).join('-');
+      const date = parseISO(dateOnly);
       const today = new Date();
       const yesterday = new Date(today);
       yesterday.setDate(yesterday.getDate() - 1);
@@ -65,11 +68,14 @@ export const JournalScreen: React.FC = () => {
     }
   };
 
-  const renderEntry = ({ item }: { item: JournalEntry }) => (
+  const renderEntry = ({ item }: { item: JournalEntryDisplay }) => (
     <TouchableOpacity onPress={() => handleEntryPress(item.date)}>
       <CustomCard style={styles.entryCard}>
         <View style={styles.entryHeader}>
-          <Text style={[globalStyles.headingText, styles.entryDate]}>
+          <Text style={[globalStyles.headingText, styles.entryTitle]}>
+            {item.title}
+          </Text>
+          <Text style={[globalStyles.secondaryText, styles.entryDate]}>
             {formatEntryDate(item.date)}
           </Text>
         </View>
@@ -141,9 +147,13 @@ const styles = StyleSheet.create({
   entryHeader: {
     marginBottom: theme.spacing.sm,
   },
-  entryDate: {
+  entryTitle: {
     fontSize: theme.fontSize.lg,
     color: theme.colors.ACCENT_COLOR,
+    marginBottom: theme.spacing.xs,
+  },
+  entryDate: {
+    fontSize: theme.fontSize.sm,
   },
   entryPreview: {
     lineHeight: 22,

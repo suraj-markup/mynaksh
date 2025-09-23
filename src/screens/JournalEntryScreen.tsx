@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DateHeader } from '../components/DateHeader';
 import { JournalInput } from '../components/JournalInput';
 import { SaveButton } from '../components/SaveButton';
-import { selectJournalEntry, updateJournalEntry } from '../store/journalSlice';
+import { selectJournalEntry, selectJournalEntryFull, updateJournalEntry } from '../store/journalSlice';
 import { globalStyles, theme } from '../utils/theme';
 
 export const JournalEntryScreen: React.FC = () => {
@@ -16,20 +16,23 @@ export const JournalEntryScreen: React.FC = () => {
   const entryDate = params.date as string || format(new Date(), 'yyyy-MM-dd');
   const isNew = params.isNew === 'true';
   
-  const existingEntry = useSelector((state: any) => selectJournalEntry(state, entryDate));
-  const [text, setText] = useState(isNew ? '' : existingEntry);
-  const [title, setTitle] = useState('Journal Entry');
+  const existingEntryText = useSelector((state: any) => selectJournalEntry(state, entryDate));
+  const existingEntryFull = useSelector((state: any) => selectJournalEntryFull(state, entryDate));
+  
+  const [text, setText] = useState(isNew ? '' : existingEntryText);
+  const [title, setTitle] = useState(isNew ? 'Journal Entry' : (existingEntryFull?.title || 'Journal Entry'));
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(isNew);
 
   useEffect(() => {
     if (!isNew) {
-      setText(existingEntry);
+      setText(existingEntryText);
+      setTitle(existingEntryFull?.title || 'Journal Entry');
     }
-  }, [existingEntry, isNew]);
+  }, [existingEntryText, existingEntryFull, isNew]);
 
   const handleTextChange = (newText: string) => {
     setText(newText);
-    setHasUnsavedChanges(newText !== existingEntry);
+    setHasUnsavedChanges(newText !== existingEntryText || title !== (existingEntryFull?.title || 'Journal Entry'));
   };
 
   const handleTitleChange = (newTitle: string) => {
@@ -38,7 +41,7 @@ export const JournalEntryScreen: React.FC = () => {
   };
 
   const handleSave = () => {
-    dispatch(updateJournalEntry({ date: entryDate, text }));
+    dispatch(updateJournalEntry({ date: entryDate, text, title }));
     setHasUnsavedChanges(false);
     Alert.alert('Saved', 'Your journal entry has been saved successfully!');
   };
