@@ -23,7 +23,6 @@ export const useAppInitialization = () => {
           dispatch(setSelectedSign(selectedSign));
         }
 
-        console.log('App initialization complete');
       } catch (error) {
         console.error('Error initializing app:', error);
       }

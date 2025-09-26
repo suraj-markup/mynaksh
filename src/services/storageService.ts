@@ -16,7 +16,7 @@ export const storageService = {
     try {
       const jsonValue = JSON.stringify(entries);
       await AsyncStorage.setItem(JOURNAL_STORAGE_KEY, jsonValue);
-      console.log('Journal entries saved to AsyncStorage');
+
     } catch (error) {
       console.error('Error saving journal entries:', error);
     }
@@ -27,7 +27,6 @@ export const storageService = {
     try {
       const jsonValue = await AsyncStorage.getItem(JOURNAL_STORAGE_KEY);
       const entries = jsonValue != null ? JSON.parse(jsonValue) : null;
-      console.log('Journal entries loaded from AsyncStorage:', Object.keys(entries || {}).length, 'entries');
       return entries;
     } catch (error) {
       console.error('Error loading journal entries:', error);
@@ -58,7 +57,6 @@ export const storageService = {
   async clearAllData(): Promise<void> {
     try {
       await AsyncStorage.multiRemove([JOURNAL_STORAGE_KEY, SELECTED_SIGN_KEY]);
-      console.log('All data cleared from AsyncStorage');
     } catch (error) {
       console.error('Error clearing data:', error);
     }
